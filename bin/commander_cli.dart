@@ -1,5 +1,10 @@
-import 'package:commander_cli/commander_cli.dart' as commander_cli;
+import 'dart:io';
+
+import 'package:commander_cli/src/domain/command_loader.dart';
+import 'package:commander_cli/src/domain/command_manager.dart';
 
 void main(List<String> arguments) {
-  print('Hello world: ${commander_cli.calculate()}!');
+  CommandManager(identifier: 'my_package')
+    ..load(Directory.current.uri)
+    ..run(arguments);
 }
