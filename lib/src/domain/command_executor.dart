@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:commander_cli/src/domain/command_line_runner.dart';
 
 final class CommandExecutor {
-  final CommandRunner _runner;
+  final CommandLineRunner _runner;
   CommandExecutor(this._runner);
 
-  void execute(List<String> args) {
-    _runner.run(args).catchError((error) {
+  void execute(List<String> arguments) {
+    _runner.run(arguments).catchError((error) {
       if (error is! UsageException) throw error;
       print(error);
       exit(64);

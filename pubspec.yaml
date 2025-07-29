@@ -6,6 +6,7 @@ environment:
   sdk: ^3.7.0
 
 dependencies:
+  analyzer: ^8.0.0
   args: ^2.7.0
   json2yaml: ^3.0.1
   path: ^1.9.1
@@ -20,6 +21,21 @@ my_package:
   includes:
     - lib/src/application/commands
   commands:
+    - name: help
+      description: Help command
+      entrypoint: lib/src/application/commands/help.dart
+      args:
+        - command
     - name: foo
-      entrypoint: lib/src/application/commands/foo.dart
       description: Foo command
+      entrypoint: lib/src/application/commands/foo.dart
+      args:
+        - name
+        - age
+      flags:
+        - name: verbose
+          abbr: v
+          help: Verbose mode
+    - name: generate
+      description: Generate commands
+      entrypoint: lib/src/application/commands/generate.dart
