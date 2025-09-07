@@ -25,15 +25,9 @@ final class CommandLineRunner extends CommandRunner {
     }
   }
 
-  init() {
+  void init() {
     if (!_commands.containsKey('help')) {
       super.addCommand(_commands['help']!);
-      argParser.addFlag(
-        'help',
-        abbr: 'h',
-        negatable: false,
-        help: 'Print this usage information.',
-      );
     }
 
     for (final element in _commands.entries) {

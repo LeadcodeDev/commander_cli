@@ -357,10 +357,10 @@ packages:
     dependency: "direct main"
     description:
       name: vine
-      sha256: "3193b8b85a48c9dae48c61a657d09942b526d5ddf30d9ee13f2ed25f839d758b"
+      sha256: a62d511cbf29e2fa4f8e6d95f8a640884d31f8b60ccf0c585d348a1add8679cb
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.7.1"
   vm_service:
     dependency: transitive
     description:

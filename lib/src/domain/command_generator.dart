@@ -5,6 +5,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:commander_cli/src/domain/internal_command.dart';
 import 'package:commander_cli/src/domain/metadata_parsers/command_metadata_parser.dart';
 import 'package:commander_cli/src/domain/metadata_parsers/flag_metadata_parser.dart';
+import 'package:commander_cli/src/domain/metadata_parsers/option_metadata_parser.dart';
 
 final class CommandGenerator {
   InternalCommand generate(File file) {
@@ -16,6 +17,7 @@ final class CommandGenerator {
     String? commandDescription;
     List<String> commandArguments = [];
     List<Map<String, dynamic>> commandFlags = [];
+    List<Map<String, dynamic>> commandOptions = [];
 
     final topLevelVariables =
         unit.declarations
@@ -39,6 +41,7 @@ final class CommandGenerator {
 
     final commandParser = CommandAnnotationParser(constantsMap);
     final flagParser = FlagAnnotationParser();
+    final optionParser = OptionAnnotationParser();
 
     for (final declaration in unit.declarations) {
       if (declaration is FunctionDeclaration &&
@@ -70,6 +73,11 @@ final class CommandGenerator {
             final flag = flagParser.parse(meta);
             commandFlags.add(flag);
           }
+
+          if (name == 'Option') {
+            final option = optionParser.parse(meta);
+            commandOptions.add(option);
+          }
         }
       }
     }
@@ -80,6 +88,7 @@ final class CommandGenerator {
       'entrypoint': file.path,
       'args': commandArguments,
       'flags': commandFlags,
+      'options': commandOptions,
     });
   }
 
@@ -98,6 +107,15 @@ final class CommandGenerator {
                   'name': flag.name,
                   if (flag.abbr != null) 'abbr': flag.abbr,
                   if (flag.help != null) 'help': flag.help,
+                };
+              }).toList(),
+        if (command.options.isNotEmpty)
+          'options':
+              command.options.map((option) {
+                return {
+                  'name': option.name,
+                  if (option.abbr != null) 'abbr': option.abbr,
+                  if (option.help != null) 'help': option.help,
                 };
               }).toList(),
       });

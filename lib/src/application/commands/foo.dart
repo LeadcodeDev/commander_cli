@@ -1,20 +1,21 @@
+import 'package:commander_cli/src/application/utils/command_parser.dart';
 import 'package:commander_cli/src/domain/annotations/command.dart';
 import 'package:commander_cli/src/domain/annotations/flag.dart';
-import 'package:commander_cli/src/domain/command_argument_parser.dart';
+import 'package:commander_cli/src/domain/annotations/option.dart';
 import 'package:vine/vine.dart';
 
-const args = ['name', 'age'];
 final validator = vine.compile(
-  vine.object({
-    args.elementAt(0): vine.string(),
-    args.elementAt(1): vine.number().min(18).optional(),
-  }),
+  vine.object({'name': vine.string(), 'age': vine.number().min(18).optional()}),
 );
 
-@Command(name: 'foo', description: 'Foo command', arguments: args)
+@Command(name: 'foo', description: 'Foo command', arguments: ['test', 'age'])
 @Flag(name: 'verbose', help: 'Verbose mode', abbr: 'v')
-Future<void> main(List<String> arguments) async {
-  final parser = CommandArgumentParser(args: arguments, validator: validator);
+@Option(name: 'color', help: 'Color mode', abbr: 'c')
+@Option(name: 'name', help: 'Name mode', abbr: 'n')
+Future<void> main() async {
+  final parser = CommandParser();
+  print(parser.flags.get('verbose'));
 
-  print(['Foo command executed', arguments, parser.getArgument('name')]);
+  // final data = validator.validate(parser.args.payload);
+  // print(['Foo command executed', data]);
 }
