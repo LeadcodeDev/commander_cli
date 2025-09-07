@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:commander_cli/src/application/utils/command_parser.dart';
 import 'package:commander_cli/src/domain/annotations/command.dart';
 import 'package:commander_cli/src/domain/command_generator.dart';
 import 'package:commander_cli/src/domain/internal_command.dart';
@@ -9,16 +10,21 @@ import 'package:yaml/yaml.dart';
 
 @Command(name: 'generate', description: 'Generate commands')
 Future<void> main(List<String> arguments) async {
+  final parser = CommandParser();
   final generator = CommandGenerator();
-  final identifier = 'my_package';
 
   final pubspec = await File('pubspec.yaml').readAsString();
   final pubspecMap = sanitize(loadYaml(pubspec) as YamlMap);
 
-  final paths = pubspecMap[identifier]?['includes'] ?? [];
+  if (pubspecMap[parser.identifier] == null) {
+    print('Command entry not found');
+    return;
+  }
+
+  final paths = pubspecMap[parser.identifier]?['includes'] ?? [];
   final List<File> files = [];
 
-  for (final location in paths) {
+  for (final location in paths is List ? paths : [paths]) {
     final directory = Directory(location);
     final results = directory
         .listSync(recursive: true)
@@ -41,8 +47,8 @@ Future<void> main(List<String> arguments) async {
   final declarations = generator.createDeclaration(internalCommands);
   final Map<String, dynamic> content = {
     ...pubspecMap,
-    identifier: {
-      ...Map<String, dynamic>.from(pubspecMap[identifier]),
+    parser.identifier: {
+      ...Map<String, dynamic>.from(pubspecMap[parser.identifier]),
       'commands': declarations,
     },
   };

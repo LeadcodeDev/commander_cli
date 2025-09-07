@@ -1,14 +1,21 @@
 import 'dart:collection';
 
 final class CommandIntrospection {
+  final String identifier;
   final CommandMetadata command;
   final ArgumentMetadata arguments;
   final FlagMetadata flags;
 
-  CommandIntrospection(this.command, this.arguments, this.flags);
+  CommandIntrospection(
+    this.identifier,
+    this.command,
+    this.arguments,
+    this.flags,
+  );
 
   factory CommandIntrospection.from(Map<String, dynamic> data) {
     return CommandIntrospection(
+      data['identifier'] as String,
       CommandMetadata(
         data['command']['name'] as String,
         data['command']['description'] as String,

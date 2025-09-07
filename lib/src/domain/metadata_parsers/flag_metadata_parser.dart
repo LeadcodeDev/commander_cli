@@ -21,6 +21,15 @@ final class FlagAnnotationParser {
         if (argName == 'abbr' && valueExpr is SimpleStringLiteral) {
           flag['abbr'] = valueExpr.value;
         }
+
+        if (argName == 'allowed' && valueExpr is ListLiteral) {
+          flag['allowed'] =
+              valueExpr.elements.map((e) => e.toString()).toList();
+        }
+
+        if (argName == 'defaultTo' && valueExpr is BooleanLiteral) {
+          flag['default'] = valueExpr.value;
+        }
       }
     }
 

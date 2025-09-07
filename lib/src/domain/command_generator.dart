@@ -89,7 +89,7 @@ final class CommandGenerator {
       'args': commandArguments,
       'flags': commandFlags,
       'options': commandOptions,
-    });
+    }, root: null);
   }
 
   List<Map<String, dynamic>> createDeclaration(List<InternalCommand> commands) {
@@ -107,15 +107,25 @@ final class CommandGenerator {
                   'name': flag.name,
                   if (flag.abbr != null) 'abbr': flag.abbr,
                   if (flag.help != null) 'help': flag.help,
+                  if (flag.defaultTo != null) 'default': flag.defaultTo,
                 };
               }).toList(),
         if (command.options.isNotEmpty)
           'options':
               command.options.map((option) {
+                if (command.args.contains(option.name)) {
+                  throw ArgumentError(
+                    'Option "${option.name}" cannot be used because it is already used as an argument',
+                  );
+                }
+
                 return {
                   'name': option.name,
                   if (option.abbr != null) 'abbr': option.abbr,
                   if (option.help != null) 'help': option.help,
+                  if (option.allowed != null) 'allowed': option.allowed,
+                  if (option.defaultTo != null) 'default': option.defaultTo,
+                  if (option.required) 'required': true,
                 };
               }).toList(),
       });

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:commander_cli/src/domain/annotations/flag.dart';
 import 'package:commander_cli/src/domain/annotations/option.dart';
+import 'package:path/path.dart';
 
 final class InternalCommand extends Command {
   @override
@@ -21,20 +22,35 @@ final class InternalCommand extends Command {
 
   final File file;
 
+  final String? identifier;
+
   InternalCommand({
     required this.name,
     required this.description,
     required this.file,
+    required this.identifier,
     this.args = const [],
     this.flags = const [],
     this.options = const [],
   }) {
     for (final flag in flags) {
-      argParser.addFlag(flag.name, abbr: flag.abbr, help: flag.help);
+      argParser.addFlag(
+        flag.name,
+        abbr: flag.abbr,
+        help: flag.help,
+        defaultsTo: flag.defaultTo,
+      );
     }
 
     for (final option in options) {
-      argParser.addOption(option.name, abbr: option.abbr, help: option.help);
+      argParser.addOption(
+        option.name,
+        abbr: option.abbr,
+        help: option.help,
+        allowed: option.allowed,
+        defaultsTo: option.defaultTo,
+        mandatory: option.required,
+      );
     }
   }
 
@@ -43,6 +59,13 @@ final class InternalCommand extends Command {
     List<String> derivedFlags,
   ) {
     final Map<String, dynamic> results = {};
+
+    for (final element in options) {
+      final value = argResults!.option(element.name);
+      if (value != null) {
+        results.putIfAbsent(element.name, () => value);
+      }
+    }
 
     for (final element in argResults!.arguments) {
       if (derivedOptions.contains(element)) {
@@ -79,27 +102,19 @@ final class InternalCommand extends Command {
   Map<String, dynamic> matchFlags(List<String> derivedFlags) {
     final Map<String, dynamic> results = {};
 
-    for (final element in argResults!.arguments) {
-      if (derivedFlags.contains(element)) {
-        final index = argResults!.arguments.indexOf(element) + 1;
-        final value = argResults!.arguments.elementAt(index);
-
-        final derivedElement = element.replaceAll('-', '');
-
-        bool match(Flag flag) {
-          return [flag.name, flag.abbr].contains(derivedElement);
-        }
-
-        final key = flags.where(match).first;
-        results.putIfAbsent(key.name, () => value);
-      }
+    for (final element in flags) {
+      final flag = argParser.options[element.name];
+      results.putIfAbsent(
+        element.name,
+        () => flag?.valueOrDefault(argResults?.flag(element.name)),
+      );
     }
 
     return results;
   }
 
   @override
-  Future run({Map<String, String> bundle = const {}}) async {
+  Future run() async {
     final List<String> derivedOptions = [];
     final List<String> derivedFlags = [];
 
@@ -115,8 +130,8 @@ final class InternalCommand extends Command {
       'dart',
       [file.path, ...argResults!.rest],
       environment: {
-        ...bundle,
         'metadata': json.encode({
+          'identifier': identifier,
           'command': {
             'name': name,
             'description': description,
@@ -134,11 +149,12 @@ final class InternalCommand extends Command {
     await process.exitCode;
   }
 
-  factory InternalCommand.of(Map<String, dynamic> element) {
+  factory InternalCommand.of(Map<String, dynamic> element, {Uri? root}) {
     return InternalCommand(
+      identifier: element['identifier'],
       name: element['name'],
       description: element['description'],
-      file: File(element['entrypoint']),
+      file: File(join(root?.path ?? '', element['entrypoint'])),
       args: List<String>.from(element['args'] ?? []),
       flags:
           List<Map<String, dynamic>>.from(
