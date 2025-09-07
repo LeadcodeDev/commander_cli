@@ -27,7 +27,6 @@ final class CommandManager {
   }
 
   void followDependencies() {
-    print('Following dependencies...');
     final dependencies = _commandLoader.resolveDependanciesCommands();
     for (final dependency in dependencies) {
       _commandRunner.addCommand(dependency);

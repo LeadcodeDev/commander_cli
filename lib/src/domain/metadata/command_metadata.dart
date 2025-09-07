@@ -37,7 +37,7 @@ final class CommandMetadata {
 
 final class ArgumentMetadata {
   final UnmodifiableMapView<String, dynamic> _raw;
-  Map<String, dynamic> get payload => Map<String, dynamic>.from(_raw);
+  Map<String, dynamic> toMap() => Map<String, dynamic>.from(_raw);
 
   T get<T>(String key, {T? defaultTo}) => (_raw[key] ?? defaultTo) as T;
 
@@ -46,7 +46,7 @@ final class ArgumentMetadata {
 
 final class FlagMetadata {
   final UnmodifiableMapView<String, dynamic> _raw;
-  Map<String, dynamic> get payload => Map<String, dynamic>.from(_raw);
+  Map<String, dynamic> toMap() => Map<String, dynamic>.from(_raw);
 
   T get<T>(String key, {T? defaultTo}) => (_raw[key] ?? defaultTo) as T;
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:args/command_runner.dart';
 import 'package:commander_cli/src/domain/annotations/flag.dart';
@@ -126,27 +127,27 @@ final class InternalCommand extends Command {
       derivedOptions.addAll(['--${option.name}', '-${option.abbr}'].nonNulls);
     }
 
-    final process = await Process.start(
-      'dart',
-      [file.path, ...argResults!.rest],
-      environment: {
-        'metadata': json.encode({
-          'identifier': identifier,
-          'command': {
-            'name': name,
-            'description': description,
-            'bin': file.path,
-          },
-          'args': matchParams(derivedOptions, derivedFlags),
-          'flags': matchFlags(derivedFlags),
-        }),
-      },
-    );
+    final receivePort = ReceivePort();
 
-    process.stdout.listen((event) => stdout.writeln(utf8.decode(event)));
-    process.stderr.listen((event) => stderr.writeln(utf8.decode(event)));
+    final metadata = {
+      'identifier': identifier,
+      'command': {'name': name, 'description': description, 'bin': file.path},
+      'args': matchParams(derivedOptions, derivedFlags),
+      'flags': matchFlags(derivedFlags),
+    };
 
-    await process.exitCode;
+    await Isolate.spawnUri(Uri.file(file.path), [], {
+      'sendPort': receivePort.sendPort,
+      'metadata': metadata,
+    });
+
+    receivePort.listen((message) {
+      if (message is String) {
+        stdout.writeln(message);
+      } else if (message is Map) {
+        stderr.writeln(jsonEncode(message));
+      }
+    });
   }
 
   factory InternalCommand.of(Map<String, dynamic> element, {Uri? root}) {

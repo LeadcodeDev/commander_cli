@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  commander_ui:
+    dependency: "direct main"
+    description:
+      name: commander_ui
+      sha256: ec706d670777d990055d7941b2835e1f71984bebc42fdbdd5828459e98dfca8b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
   convert:
     dependency: transitive
     description:
@@ -81,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
+  ffi:
+    dependency: transitive
+    description:
+      name: ffi
+      sha256: "289279317b4b16eb2bb7e271abccd4bf84ec9bdcbe999e278a94b804f5630418"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
   file:
     dependency: transitive
     description:
@@ -161,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  mansion:
+    dependency: transitive
+    description:
+      name: mansion
+      sha256: d508aeb5b6f4ea06a89cbb4a34d8be30ca5dfc18c29ce7311736b3cc3ee41b5a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+2"
   matcher:
     dependency: transitive
     description:
@@ -305,14 +329,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
-  string_validator:
-    dependency: transitive
-    description:
-      name: string_validator
-      sha256: "240f4c98027dfbe8639c8271ef18cc9de735b47067aa15a720cfed9576a512b1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   term_glyph:
     dependency: transitive
     description:
@@ -353,14 +369,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  vine:
-    dependency: "direct main"
-    description:
-      name: vine
-      sha256: a62d511cbf29e2fa4f8e6d95f8a640884d31f8b60ccf0c585d348a1add8679cb
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.7.1"
   vm_service:
     dependency: transitive
     description:
@@ -409,6 +417,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  win32:
+    dependency: transitive
+    description:
+      name: win32
+      sha256: "329edf97fdd893e0f1e3b9e88d6a0e627128cc17cc316a8d67fda8f1451178ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.13.0"
   yaml:
     dependency: "direct main"
     description:

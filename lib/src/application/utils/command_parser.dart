@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:commander_cli/src/domain/metadata/command_metadata.dart';
 
 final class CommandParser {
@@ -9,13 +6,15 @@ final class CommandParser {
   late final ArgumentMetadata args;
   late final FlagMetadata flags;
 
-  CommandParser() {
-    if (Platform.environment['metadata'] case String value) {
-      final metadata = CommandIntrospection.from(json.decode(value));
+  CommandParser(Map<String, Object> payload) {
+    if (payload['metadata'] case Map<String, dynamic> value) {
+      final metadata = CommandIntrospection.from(value);
+
       identifier = metadata.identifier;
       command = metadata.command;
       args = metadata.arguments;
       flags = metadata.flags;
+
       return;
     }
 
